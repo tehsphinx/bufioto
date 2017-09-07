@@ -3,6 +3,7 @@ package bufioto
 import (
 	"bufio"
 	"errors"
+	"io"
 	"time"
 )
 
@@ -15,9 +16,9 @@ type TimeoutReader struct {
 }
 
 // NewTimeoutReader creates a new TimeoutReader
-func NewTimeoutReader(reader *bufio.Reader, timeout time.Duration) *TimeoutReader {
+func NewTimeoutReader(reader io.Reader, timeout time.Duration) *TimeoutReader {
 	return &TimeoutReader{
-		Reader:  reader,
+		Reader:  bufio.NewReader(reader),
 		timeout: timeout,
 	}
 }

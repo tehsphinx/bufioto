@@ -1,7 +1,6 @@
 package bufioto
 
 import (
-	"bufio"
 	"io"
 	"strings"
 	"testing"
@@ -12,7 +11,7 @@ import (
 
 func TestTimeoutScanner_Scan(t *testing.T) {
 	r, w := io.Pipe()
-	scanner := NewTimeoutScanner(bufio.NewScanner(r), 500*time.Millisecond)
+	scanner := NewTimeoutScanner(r, 500*time.Millisecond)
 	stringsSend := []string{
 		"foo\n",  // should not time out
 		"foo2\n", // should not time out

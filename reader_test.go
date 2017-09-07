@@ -1,7 +1,6 @@
 package bufioto
 
 import (
-	"bufio"
 	"io"
 	"testing"
 	"time"
@@ -11,7 +10,7 @@ import (
 
 func TestTimeoutReader_ReadString(t *testing.T) {
 	r, w := io.Pipe()
-	reader := NewTimeoutReader(bufio.NewReader(r), 500*time.Millisecond)
+	reader := NewTimeoutReader(r, 500*time.Millisecond)
 	stringsSend := []string{
 		"foo\n",  // should not time out
 		"foo2\n", // should not time out

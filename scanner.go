@@ -2,6 +2,7 @@ package bufioto
 
 import (
 	"bufio"
+	"io"
 	"time"
 )
 
@@ -13,9 +14,9 @@ type TimeoutScanner struct {
 }
 
 // NewTimeoutScanner creates a new TimeoutScanner
-func NewTimeoutScanner(scanner *bufio.Scanner, timeout time.Duration) *TimeoutScanner {
+func NewTimeoutScanner(reader io.Reader, timeout time.Duration) *TimeoutScanner {
 	return &TimeoutScanner{
-		Scanner: scanner,
+		Scanner: bufio.NewScanner(reader),
 		timeout: timeout,
 	}
 }
