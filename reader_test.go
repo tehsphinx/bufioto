@@ -2,7 +2,6 @@ package bufioto
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"testing"
 	"time"
@@ -14,8 +13,9 @@ func TestTimeoutReader_ReadString(t *testing.T) {
 	r, w := io.Pipe()
 	reader := NewTimeoutReader(bufio.NewReader(r), 500*time.Millisecond)
 	stringsSend := []string{
-		"foo\n", // should not time out
-		"bar",   // should time out
+		"foo\n",  // should not time out
+		"foo2\n", // should not time out
+		"bar",    // should time out
 	}
 	go func() {
 		for _, s := range stringsSend {
@@ -30,18 +30,16 @@ func TestTimeoutReader_ReadString(t *testing.T) {
 		if err != nil {
 			if err == Timeout {
 				timeoutCount++
-				fmt.Println(err)
-				continue
+				break
 			}
 			t.Error(err)
 			break
 		}
-		fmt.Println("got:", str)
 		stringsReceive = append(stringsReceive, str)
 	}
 
 	assert.Equal(t, 1, timeoutCount, "timout count not correct")
-	assert.Equal(t, 1, len(stringsReceive), "not enough messages received")
+	assert.Equal(t, 2, len(stringsReceive), "not enough messages received")
 	if len(stringsReceive) > 0 {
 		assert.Equal(t, stringsSend[0], stringsReceive[0])
 	}

@@ -22,7 +22,7 @@ func NewTimeoutReader(reader *bufio.Reader, timeout time.Duration) *TimeoutReade
 	}
 }
 
-// Peek wraps bufio.Peek adding timeout
+// Peek wraps bufio.Reader.Peek adding timeout
 func (s *TimeoutReader) Peek(n int) (b []byte, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -40,10 +40,9 @@ func (s *TimeoutReader) Peek(n int) (b []byte, err error) {
 		chTo <- true
 		return nil, Timeout
 	}
-	return
 }
 
-// Discard wraps bufio.Discard adding timeout
+// Discard wraps bufio.Reader.Discard adding timeout
 func (s *TimeoutReader) Discard(n int) (discarded int, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -62,10 +61,9 @@ func (s *TimeoutReader) Discard(n int) (discarded int, err error) {
 		chTo <- true
 		return 0, Timeout
 	}
-	return
 }
 
-// Read wraps bufio.Read adding timeout
+// Read wraps bufio.Reader.Read adding timeout
 func (s *TimeoutReader) Read(buf []byte) (n int, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -83,10 +81,9 @@ func (s *TimeoutReader) Read(buf []byte) (n int, err error) {
 		chTo <- true
 		return 0, Timeout
 	}
-	return
 }
 
-// ReadByte wraps bufio.ReadByte adding timeout
+// ReadByte wraps bufio.Reader.ReadByte adding timeout
 func (s *TimeoutReader) ReadByte() (b byte, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -104,10 +101,9 @@ func (s *TimeoutReader) ReadByte() (b byte, err error) {
 		chTo <- true
 		return 0, Timeout
 	}
-	return
 }
 
-// ReadRune wraps bufio.ReadRune adding timeout
+// ReadRune wraps bufio.Reader.ReadRune adding timeout
 func (s *TimeoutReader) ReadRune() (r rune, size int, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -125,10 +121,9 @@ func (s *TimeoutReader) ReadRune() (r rune, size int, err error) {
 		chTo <- true
 		return 0, 0, Timeout
 	}
-	return
 }
 
-// ReadSlice wraps bufio.ReadSlice adding timeout
+// ReadSlice wraps bufio.Reader.ReadSlice adding timeout
 func (s *TimeoutReader) ReadSlice(delim byte) (line []byte, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -146,10 +141,9 @@ func (s *TimeoutReader) ReadSlice(delim byte) (line []byte, err error) {
 		chTo <- true
 		return nil, Timeout
 	}
-	return
 }
 
-// ReadLine wraps bufio.ReadLine adding timeout
+// ReadLine wraps bufio.Reader.ReadLine adding timeout
 func (s *TimeoutReader) ReadLine() (line []byte, isPrefix bool, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -167,10 +161,9 @@ func (s *TimeoutReader) ReadLine() (line []byte, isPrefix bool, err error) {
 		chTo <- true
 		return nil, false, Timeout
 	}
-	return
 }
 
-// ReadBytes wraps bufio.ReadBytes adding timeout
+// ReadBytes wraps bufio.Reader.ReadBytes adding timeout
 func (s *TimeoutReader) ReadBytes(delim byte) (b []byte, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -188,10 +181,9 @@ func (s *TimeoutReader) ReadBytes(delim byte) (b []byte, err error) {
 		chTo <- true
 		return nil, Timeout
 	}
-	return
 }
 
-// ReadString wraps bufio.ReadString adding timeout
+// ReadString wraps bufio.Reader.ReadString adding timeout
 func (s *TimeoutReader) ReadString(delim byte) (str string, err error) {
 	ch := make(chan bool)
 	chTo := make(chan bool, 1)
@@ -209,5 +201,4 @@ func (s *TimeoutReader) ReadString(delim byte) (str string, err error) {
 		chTo <- true
 		return "", Timeout
 	}
-	return
 }
