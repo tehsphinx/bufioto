@@ -8,32 +8,36 @@ import (
 
 var Timeout = errors.New("Timeout on reading")
 
-// TimeoutReader is a wrapper for any reader adding timeout
+// TimeoutReader is a wrapper for a bufio reader adding timeout
 type TimeoutReader struct {
-	bufio.Reader
+	*bufio.Reader
 	timeout time.Duration
-	ch      chan bool
 }
 
 // NewTimeoutReader creates a new TimeoutReader
-func NewTimeoutReader(reader bufio.Reader, timeout time.Duration) *TimeoutReader {
+func NewTimeoutReader(reader *bufio.Reader, timeout time.Duration) *TimeoutReader {
 	return &TimeoutReader{
 		Reader:  reader,
 		timeout: timeout,
-		ch:      make(chan bool),
 	}
 }
 
 // Peek wraps bufio.Peek adding timeout
 func (s *TimeoutReader) Peek(n int) (b []byte, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		b, err = s.Reader.Peek(n)
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return nil, Timeout
 	}
 	return
@@ -41,14 +45,21 @@ func (s *TimeoutReader) Peek(n int) (b []byte, err error) {
 
 // Discard wraps bufio.Discard adding timeout
 func (s *TimeoutReader) Discard(n int) (discarded int, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		discarded, err = s.Reader.Discard(n)
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
+	//s.Reader.Reset()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return 0, Timeout
 	}
 	return
@@ -56,14 +67,20 @@ func (s *TimeoutReader) Discard(n int) (discarded int, err error) {
 
 // Read wraps bufio.Read adding timeout
 func (s *TimeoutReader) Read(buf []byte) (n int, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		n, err = s.Reader.Read(buf)
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return 0, Timeout
 	}
 	return
@@ -71,14 +88,20 @@ func (s *TimeoutReader) Read(buf []byte) (n int, err error) {
 
 // ReadByte wraps bufio.ReadByte adding timeout
 func (s *TimeoutReader) ReadByte() (b byte, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		b, err = s.Reader.ReadByte()
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return 0, Timeout
 	}
 	return
@@ -86,14 +109,20 @@ func (s *TimeoutReader) ReadByte() (b byte, err error) {
 
 // ReadRune wraps bufio.ReadRune adding timeout
 func (s *TimeoutReader) ReadRune() (r rune, size int, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		r, size, err = s.Reader.ReadRune()
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return 0, 0, Timeout
 	}
 	return
@@ -101,14 +130,20 @@ func (s *TimeoutReader) ReadRune() (r rune, size int, err error) {
 
 // ReadSlice wraps bufio.ReadSlice adding timeout
 func (s *TimeoutReader) ReadSlice(delim byte) (line []byte, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		line, err = s.Reader.ReadSlice(delim)
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return nil, Timeout
 	}
 	return
@@ -116,14 +151,20 @@ func (s *TimeoutReader) ReadSlice(delim byte) (line []byte, err error) {
 
 // ReadLine wraps bufio.ReadLine adding timeout
 func (s *TimeoutReader) ReadLine() (line []byte, isPrefix bool, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		line, isPrefix, err = s.Reader.ReadLine()
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return nil, false, Timeout
 	}
 	return
@@ -131,14 +172,20 @@ func (s *TimeoutReader) ReadLine() (line []byte, isPrefix bool, err error) {
 
 // ReadBytes wraps bufio.ReadBytes adding timeout
 func (s *TimeoutReader) ReadBytes(delim byte) (b []byte, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		b, err = s.Reader.ReadBytes(delim)
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return nil, Timeout
 	}
 	return
@@ -146,14 +193,20 @@ func (s *TimeoutReader) ReadBytes(delim byte) (b []byte, err error) {
 
 // ReadString wraps bufio.ReadString adding timeout
 func (s *TimeoutReader) ReadString(delim byte) (str string, err error) {
+	ch := make(chan bool)
+	chTo := make(chan bool, 1)
 	go func() {
 		str, err = s.Reader.ReadString(delim)
-		s.ch <- true
+		select {
+		case ch <- true:
+		case <-chTo:
+		}
 	}()
 	select {
-	case <-s.ch:
+	case <-ch:
 		return
 	case <-time.After(s.timeout):
+		chTo <- true
 		return "", Timeout
 	}
 	return
