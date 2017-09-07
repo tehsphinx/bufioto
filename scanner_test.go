@@ -3,10 +3,9 @@ package bufioto
 import (
 	"bufio"
 	"io"
+	"strings"
 	"testing"
 	"time"
-
-	"strings"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -15,9 +14,9 @@ func TestTimeoutScanner_Scan(t *testing.T) {
 	r, w := io.Pipe()
 	scanner := NewTimeoutScanner(bufio.NewScanner(r), 500*time.Millisecond)
 	stringsSend := []string{
-		"foo\n", // should not time out
+		"foo\n",  // should not time out
 		"foo2\n", // should not time out
-		"bar",   // should time out
+		"bar",    // should time out
 	}
 	go func() {
 		for _, s := range stringsSend {
