@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-var Timeout = errors.New("Timeout on reading")
+var Timeout = errors.New("timeout on reading")
 
 // TimeoutReader is a wrapper for a bufio reader adding timeout
 type TimeoutReader struct {
@@ -34,6 +34,13 @@ func (s *TimeoutReader) Peek(n int) (b []byte, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -55,6 +62,13 @@ func (s *TimeoutReader) Discard(n int) (discarded int, err error) {
 		}
 	}()
 	//s.Reader.Reset()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -75,6 +89,13 @@ func (s *TimeoutReader) Read(buf []byte) (n int, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -95,6 +116,13 @@ func (s *TimeoutReader) ReadByte() (b byte, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -115,6 +143,13 @@ func (s *TimeoutReader) ReadRune() (r rune, size int, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -135,6 +170,13 @@ func (s *TimeoutReader) ReadSlice(delim byte) (line []byte, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -155,6 +197,13 @@ func (s *TimeoutReader) ReadLine() (line []byte, isPrefix bool, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -175,6 +224,13 @@ func (s *TimeoutReader) ReadBytes(delim byte) (b []byte, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return
@@ -195,6 +251,13 @@ func (s *TimeoutReader) ReadString(delim byte) (str string, err error) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for reader result
+	if s.timeout == 0 {
+		<-ch
+		return
+	}
+
 	select {
 	case <-ch:
 		return

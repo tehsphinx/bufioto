@@ -32,6 +32,13 @@ func (s *TimeoutScanner) Scan() (ok bool) {
 		case <-chTo:
 		}
 	}()
+
+	// no timout: wait for scanner result
+	if s.timeout == 0 {
+		<-ch
+		return ok
+	}
+
 	select {
 	case <-ch:
 		return ok
