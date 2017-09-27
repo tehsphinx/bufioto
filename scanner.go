@@ -22,9 +22,13 @@ func NewTimeoutScanner(reader io.Reader, timeout time.Duration) *TimeoutScanner 
 }
 
 // Scan wraps bufio.Scanner.Scan adding timout
-func (s *TimeoutScanner) Scan() (ok bool) {
-	ch := make(chan bool)
-	chTo := make(chan bool, 1)
+func (s *TimeoutScanner) Scan() bool {
+	var (
+		ok   bool
+		ch   = make(chan bool)
+		chTo = make(chan bool, 1)
+	)
+
 	go func() {
 		ok = s.Scanner.Scan()
 		select {
