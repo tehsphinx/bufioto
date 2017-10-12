@@ -3,6 +3,7 @@ package bufioto
 import (
 	"bufio"
 	"io"
+	"log"
 	"time"
 )
 
@@ -30,6 +31,12 @@ func (s *TimeoutScanner) Scan() bool {
 	)
 
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Println("Scanner panicked with:", r)
+			}
+		}()
+
 		ok = s.Scanner.Scan()
 		select {
 		case ch <- true:
